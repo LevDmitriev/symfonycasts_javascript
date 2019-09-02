@@ -65,13 +65,13 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        $(document).ready(function() {
-            /**
-             * Таблица с историей
-             * @type {jQuery.fn.init|jQuery|HTMLElement}
-             */
-            var $table = $('.js-rep-log-table');
-            $table.find('.js-delete-rep-log').on('click', function (e) {
+        var RepLog = {
+            initialize: function ($wrapper) {
+                this.$wrapper = $wrapper;
+                this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete);
+                this.$wrapper.find('tbody tr').on('click', this.handleRowClick)
+                },
+            handleRepLogDelete: function(e) {
                 e.preventDefault();
                 $(this).addClass('text-danger');
                 $(this).find('.fa')
@@ -83,7 +83,7 @@
                 /** Строка по которой был произведён клил */
                 var $row = $(this).closest('tr');
                 /** Блок, в котором указано общее кол-во веса */
-                var $totalWeightContainer = $table.find('.js-total-weight');
+                var $totalWeightContainer = this.$wrapper.find('.js-total-weight');
                 /** Новое значение общего веса */
                 var newWeight = $totalWeightContainer.html() - $row.data('weight');
                 $.ajax({
@@ -94,10 +94,18 @@
                         $totalWeightContainer.html(newWeight);
                     }
                 })
-            });
-            $table.find('tbody tr').on('click', function () {
+            },
+            handleRowClick: function () {
                 console.log('row clicked');
-            })
+            }
+        };
+        $(document).ready(function() {
+            /**
+             * Таблица с историей
+             * @type {jQuery.fn.init|jQuery|HTMLElement}
+             */
+            var $table = $('.js-rep-log-table');
+            RepLog.initialize($table);
         })
 
     </script>

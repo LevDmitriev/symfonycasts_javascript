@@ -69,7 +69,9 @@
             initialize: function ($wrapper) {
                 this.$wrapper = $wrapper;
                 this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete);
-                this.$wrapper.find('tbody tr').on('click', this.handleRowClick)
+                this.$wrapper.find('tbody tr').on('click', this.handleRowClick);
+                var newThis = {cat: 'meow', dog: 'woof'}
+                this.whatIsThis.call(newThis, 'hello');
                 },
             updateTotalWeightLifted: function() {
                 var totalWeight = 0;
@@ -78,6 +80,9 @@
                     totalWeight += $(this).data('weight')
                 });
                 this.$wrapper.find('.js-total-weight').html(totalWeight);
+            },
+            whatIsThis: function(greeting) {
+                console.log(this, greeting);
             },
             handleRepLogDelete: function(e) {
                 e.preventDefault();
@@ -95,7 +100,7 @@
                     method: 'DELETE',
                     success: function() {
                         $row.fadeOut('normal', function() {
-                            $row.remove();
+                            $(this).remove();
                             RepLogApp.updateTotalWeightLifted();
                         });
                     }

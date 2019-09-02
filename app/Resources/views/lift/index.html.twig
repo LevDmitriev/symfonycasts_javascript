@@ -68,10 +68,8 @@
         var RepLogApp = {
             initialize: function ($wrapper) {
                 this.$wrapper = $wrapper;
-                this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete);
-                this.$wrapper.find('tbody tr').on('click', this.handleRowClick);
-                var newThis = {cat: 'meow', dog: 'woof'}
-                this.whatIsThis.call(newThis, 'hello');
+                this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete.bind(this));
+                this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
                 },
             updateTotalWeightLifted: function() {
                 var totalWeight = 0;
@@ -81,27 +79,26 @@
                 });
                 this.$wrapper.find('.js-total-weight').html(totalWeight);
             },
-            whatIsThis: function(greeting) {
-                console.log(this, greeting);
-            },
             handleRepLogDelete: function(e) {
                 e.preventDefault();
-                $(this).addClass('text-danger');
-                $(this).find('.fa')
+                var $link = $(e.currentTarget);
+                $link.addClass('text-danger');
+                $link.find('.fa')
                     .removeClass('fa-trash')
                     .addClass('fa-spinner')
                     .addClass('fa-spin');
                 /** Ссылка на API для удаленя записи из БД */
-                var deleteUrl = $(this).data('url');
+                var deleteUrl = $link.data('url');
                 /** Строка по которой был произведён клил */
-                var $row = $(this).closest('tr');
+                var $row = $link.closest('tr');
+                var self = this;
                 $.ajax({
                     url: deleteUrl,
                     method: 'DELETE',
                     success: function() {
                         $row.fadeOut('normal', function() {
                             $(this).remove();
-                            RepLogApp.updateTotalWeightLifted();
+                            self.updateTotalWeightLifted();
                         });
                     }
                 })

@@ -65,12 +65,20 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        var RepLog = {
+        var RepLogApp = {
             initialize: function ($wrapper) {
                 this.$wrapper = $wrapper;
                 this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete);
                 this.$wrapper.find('tbody tr').on('click', this.handleRowClick)
                 },
+            updateTotalWeightLifted: function() {
+                var totalWeight = 0;
+
+                this.$wrapper.find('tbody tr').each(function () {
+                    totalWeight += $(this).data('weight')
+                });
+                this.$wrapper.find('.js-total-weight').html(totalWeight);
+            },
             handleRepLogDelete: function(e) {
                 e.preventDefault();
                 $(this).addClass('text-danger');
@@ -82,16 +90,14 @@
                 var deleteUrl = $(this).data('url');
                 /** Строка по которой был произведён клил */
                 var $row = $(this).closest('tr');
-                /** Блок, в котором указано общее кол-во веса */
-                var $totalWeightContainer = this.$wrapper.find('.js-total-weight');
-                /** Новое значение общего веса */
-                var newWeight = $totalWeightContainer.html() - $row.data('weight');
                 $.ajax({
                     url: deleteUrl,
                     method: 'DELETE',
                     success: function() {
-                        $row.fadeOut();
-                        $totalWeightContainer.html(newWeight);
+                        $row.fadeOut('normal', function() {
+                            $row.remove();
+                            RepLogApp.updateTotalWeightLifted();
+                        });
                     }
                 })
             },
@@ -105,7 +111,7 @@
              * @type {jQuery.fn.init|jQuery|HTMLElement}
              */
             var $table = $('.js-rep-log-table');
-            RepLog.initialize($table);
+            RepLogApp.initialize($table);
         })
 
     </script>

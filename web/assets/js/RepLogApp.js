@@ -4,12 +4,12 @@
     window.RepLogApp = {
         initialize:              function ($wrapper) {
             this.$wrapper = $wrapper;
-            Helper.initialize($wrapper);
+            this.helper = new Helper($wrapper);
             this.$wrapper.find('.js-delete-rep-log').on('click', this.handleRepLogDelete.bind(this));
             this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
         },
         updateTotalWeightLifted: function () {
-            this.$wrapper.find('.js-total-weight').html(Helper.calculateTotalWeight());
+            this.$wrapper.find('.js-total-weight').html(this.helper.calculateTotalWeight());
         },
         handleRepLogDelete:      function (e) {
             e.preventDefault();
@@ -46,18 +46,16 @@
      * Мы не можем сделать методы приватными, но межем сделать переменные,
      * используя область видимости
      */
-    var Helper = {
-        initialize:           function ($wrapper) {
-            this.$wrapper = $wrapper;
-        },
-        calculateTotalWeight: function () {
-            var totalWeight = 0;
+    var Helper           = function ($wrapper) {
+        this.$wrapper = $wrapper;
+    };
+    Helper.calculateTotalWeight = function () {
+        var totalWeight = 0;
 
-            this.$wrapper.find('tbody tr').each(function () {
-                totalWeight += $(this).data('weight')
-            });
+        this.$wrapper.find('tbody tr').each(function () {
+            totalWeight += $(this).data('weight');
+        });
 
-            return totalWeight;
-        },
-    }
+        return totalWeight;
+    };
 })(window, jQuery)

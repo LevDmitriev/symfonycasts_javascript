@@ -49,7 +49,7 @@
     var Helper           = function ($wrapper) {
         this.$wrapper = $wrapper;
     };
-    Helper.calculateTotalWeight = function () {
+    Helper.prototype.calculateTotalWeight = function () {
         var totalWeight = 0;
 
         this.$wrapper.find('tbody tr').each(function () {

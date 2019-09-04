@@ -6,10 +6,13 @@
         this.helper = new Helper($wrapper);
         this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
         this.$wrapper.on('click', 'tbody tr', this.handleRowClick.bind(this));
-        this.$wrapper.on('submit', '.js-new-rep-log-form', this.handleNewFormSubmit.bind(this));
+        this.$wrapper.on('submit', this._selectors.newRepForm, this.handleNewFormSubmit.bind(this));
     };
 
     $.extend(window.RepLogApp.prototype, {
+        _selectors: {
+            newRepForm: '.js-new-rep-log-form',
+        },
         updateTotalWeightLifted: function () {
             this.$wrapper.find('.js-total-weight').html(this.helper.calculateTotalWeight());
         },
@@ -44,10 +47,11 @@
             e.preventDefault();
             var $form = $(e.currentTarget);
             var formData = {};
+            var self = this;
+
             $.each($form.serializeArray(), function (key, fieldData) {
                 formData[fieldData.name] = fieldData.value;
             });
-
             $.ajax({
                 url: $form.data('url'),
                 method: 'POST',
@@ -57,9 +61,29 @@
                     console.log('success!');
                 },
                 error: function (jqXHR) {
-                    // todo
-                    console.log('error :(');
+                    var errorData = JSON.parse(jqXHR.responseText);
+                    self._mapErrorsToForm(errorData.errors);
                 }
+            })
+        },
+
+        _mapErrorsToForm: function (errorData) {
+            // reset things
+            var $form = this.$wrapper.find(this._selectors.newRepForm);
+
+            $form.find('.js-field-error').remove();
+            $form.find('.form-group').removeClass('has-error');
+            $form.find(':input').each(function () {
+                var fieldName = $(this).attr('name');
+                var $wrapper = $(this).closest('.form-group');
+                if (!errorData[fieldName]) {
+                    // no error!
+                    return;
+                }
+                var $error = $('<span class="js-field-error help-block"></span>');
+                $error.html(errorData[fieldName]);
+                $wrapper.append($error);
+                $wrapper.addClass('has-error');
             })
         }
     });

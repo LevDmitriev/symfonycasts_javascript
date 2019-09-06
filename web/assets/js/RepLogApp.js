@@ -73,11 +73,22 @@
         },
 
         _saveRepLog: function(data) {
-            return $.ajax({
-                url: Routing.generate('rep_log_new'),
-                method: 'POST',
-                data: JSON.stringify(data),
-            })
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url:    Routing.generate('rep_log_new'),
+                    method: 'POST',
+                    data:   JSON.stringify(data)
+                }).then(function (data, textStatus, jqXHR) {
+                    $.ajax({
+                        url: jqXHR.getResponseHeader('Location')
+                    }).then(function (data) {
+                        // we are finally done
+                        resolve(data);
+                    });
+                }).catch(function (jqXHR) {
+                    reject(jqXHR);
+                });
+            });
         },
         _mapErrorsToForm: function (errorData) {
             // reset things

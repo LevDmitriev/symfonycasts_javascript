@@ -1,6 +1,6 @@
 'use strict';
 
-(function(window, $, Routing) {
+(function(window, $, Routing, swal) {
     window.RepLogApp = function ($wrapper) {
         this.$wrapper = $wrapper;
         this.helper = new Helper($wrapper);
@@ -30,6 +30,19 @@
         handleRepLogDelete:      function (e) {
             e.preventDefault();
             var $link = $(e.currentTarget);
+            var self = this;
+
+            swal({
+                title: "Delete this log?",
+                text: "What? Did you not actually lift this?",
+                showCancelButton: true
+            }).then(function () {
+                self._deleteRepLog($link);
+            }).catch(function () {
+                console.log('canseled');
+            })
+        },
+        _deleteRepLog: function($link) {
             $link.addClass('text-danger');
             $link.find('.fa')
                 .removeClass('fa-trash')
@@ -150,4 +163,4 @@
             return totalWeight;
         }
     });
-})(window, jQuery, Routing)
+})(window, jQuery, Routing, swal)

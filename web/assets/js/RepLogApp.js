@@ -66,9 +66,8 @@
                 .then(function (data) {
                     self._clearForm();
                     self._addRow(data);
-                }).catch(function (jqXHR) {
-                var errorData = JSON.parse(jqXHR.responseText);
-                self._mapErrorsToForm(errorData.errors);
+                }).catch(function (errorData) {
+                    self._mapErrorsToForm(errorData.errors);
             });
         },
 
@@ -86,7 +85,8 @@
                         resolve(data);
                     });
                 }).catch(function (jqXHR) {
-                    reject(jqXHR);
+                    var errorData = JSON.parse(jqXHR.responseText);
+                    reject(errorData);
                 });
             });
         },

@@ -8,10 +8,10 @@
             this.loadRepLogs();
             this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
             this.$wrapper.on('click', 'tbody tr', this.handleRowClick.bind(this));
-            this.$wrapper.on('submit', this._selectors.newRepForm, this.handleNewFormSubmit.bind(this));
+            this.$wrapper.on('submit', RepLogApp._selectors.newRepForm, this.handleNewFormSubmit.bind(this));
         }
 
-        get _selectors() {
+        static get _selectors() {
             return {
                 newRepForm: '.js-new-rep-log-form',
             }
@@ -105,7 +105,7 @@
         }
         _mapErrorsToForm(errorData) {
             // reset things
-            const $form = this.$wrapper.find(this._selectors.newRepForm);
+            const $form = this.$wrapper.find(RepLogApp._selectors.newRepForm);
 
             this._removeFormErrors();
             $form.find(':input').each((index, element) => {
@@ -122,7 +122,7 @@
             })
         }
         _removeFormErrors() {
-            const $form = this.$wrapper.find(this._selectors.newRepForm);
+            const $form = this.$wrapper.find(RepLogApp._selectors.newRepForm);
 
             $form.find('.js-field-error').remove();
             $form.find('.form-group').removeClass('has-error');
@@ -130,7 +130,7 @@
         _clearForm() {
             this._removeFormErrors();
 
-            const $form = this.$wrapper.find(this._selectors.newRepForm);
+            const $form = this.$wrapper.find(RepLogApp._selectors.newRepForm);
             $form[0].reset();
         }
         _addRow(repLog) {
@@ -154,13 +154,7 @@
             this.$wrapper = $wrapper;
         }
         calculateTotalWeight() {
-            let totalWeight = 0;
-
-            this.$wrapper.find('tbody tr').each((index, element) => {
-                totalWeight += $(element).data('weight');
-            });
-
-            return totalWeight;
+            return Helper._calculateWeight(this.$wrapper.find('tbody tr'))
         }
         getTotalWeightString(maxWeight = 500) {
             let weight = this.calculateTotalWeight();
@@ -170,6 +164,15 @@
             }
 
             return weight + ' lbs';
+        }
+        static _calculateWeight($elements) {
+            let totalWeight = 0;
+
+            $elements.each((index, element) => {
+                totalWeight += $(element).data('weight');
+            });
+
+            return totalWeight;
         }
     };
 

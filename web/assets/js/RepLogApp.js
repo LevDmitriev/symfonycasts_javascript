@@ -1,10 +1,12 @@
 'use strict';
 
 (function(window, $, Routing, swal) {
+    let HelperInstances = new WeakMap();
+
     class RepLogApp {
         constructor($wrapper) {
             this.$wrapper = $wrapper;
-            this.helper   = new Helper($wrapper);
+            HelperInstances.set(this, new Helper($wrapper));
             this.loadRepLogs();
             this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
             this.$wrapper.on('click', 'tbody tr', this.handleRowClick.bind(this));
@@ -26,7 +28,7 @@
             })
         }
         updateTotalWeightLifted() {
-            this.$wrapper.find('.js-total-weight').html(this.helper.getTotalWeightString());
+            this.$wrapper.find('.js-total-weight').html(HelperInstances.get(this).getTotalWeightString());
         }
         handleRepLogDelete(e) {
             e.preventDefault();

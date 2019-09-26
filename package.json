@@ -1,0 +1,11 @@
+{
+  "name": "symfonycasts_javascript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:LevDmitriev/symfonycasts_javascript.git",
+  "author": "Lev Dmitriev <Lev.Dmitrievv@yandex.ru>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  }
+}
